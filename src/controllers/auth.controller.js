@@ -1,4 +1,4 @@
-const user = require("../models/user.model")
+const userModel = require("../models/user.model")
 const bcrypt = require("bcrypt")
 
 const login = async (req, res) => {
@@ -9,8 +9,7 @@ const login = async (req, res) => {
 const register = async (req, res) => {
 
     const { email } = req.body
-
-    const userCheck = await user.finOne({ email: email })
+    const userCheck = await userModel.find({ email: email })
 
     if (userCheck) {
         console.log("Girilen mail kullanımda.")
@@ -18,26 +17,23 @@ const register = async (req, res) => {
 
     req.body.password = await bcrypt.hash(req.body.password, 10)
 
-    console.log("pasworx", req.body.password)
-
     try {
-        const newUserData = new user(req.body)
 
-        await newUserData.save()
-            .then((res) => {
-                return res.status(201).json({
-                    success: true,
-                    data: res,
-                    message: "Kayıt başarılı"
-                })
-            })
-            .catch((err) => {
-                console.log("Kayıt başarısız", err)
-            })
+        const newUserData = new userModel(req.body)
+        const savedUser = await newUserData.save();
+        return res.status(201).json({
+            success: true,
+            data: savedUser,
+            message: "Kayıt başarılı"
+        });
 
+    } catch (err) {
 
-    } catch (error) {
-        console.log("error", error)
+        return res.status(500).json({
+            success: false,
+            error: "Internal Server Error"
+        });
+        
     }
 }
 
