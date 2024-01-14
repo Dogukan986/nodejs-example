@@ -18,14 +18,14 @@ const register = async (req, res) => {
 
     req.body.password = await bcrypt.hash(req.body.password, 10)
 
-    const newUserData = new userModel(req.body)
-    await newUserData.save()
-        .then((res) => {
-            return new Response(res, "Kullanıcı kaydı başarıyla oluştu.").created(res)
-        })
-        .catch((err) => {
-            throw new APIError("Kullanıcı kayıt edilemedi !", 400)
-        })
+    const newUserData = new userModel(req.body);
+
+    try {
+        const savedUserData = await newUserData.save();
+        return new Response(savedUserData, "Kullanıcı kaydı başarıyla oluştu.").created(res);
+    } catch (err) {
+        throw new APIError("Kullanıcı kayıt edilemedi !", 400);
+    }
 
 }
 
