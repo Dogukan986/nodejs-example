@@ -1,5 +1,6 @@
 const userModel = require("../models/user.model")
 const bcrypt = require("bcrypt")
+const APIError = require("../utils/errors")
 
 const login = async (req, res) => {
     console.log("login", req.body)
@@ -12,7 +13,7 @@ const register = async (req, res) => {
     const userCheck = await userModel.find({ email: email })
 
     if (userCheck) {
-        console.log("Girilen mail kullanımda.")
+        throw new APIError("Girilen mail kullanımda.", 401)
     }
 
     req.body.password = await bcrypt.hash(req.body.password, 10)
@@ -33,7 +34,7 @@ const register = async (req, res) => {
             success: false,
             error: "Internal Server Error"
         });
-        
+
     }
 }
 
