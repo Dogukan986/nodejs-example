@@ -4,6 +4,20 @@ const APIError = require("../utils/errors")
 const Response = require("../utils/response")
 
 const login = async (req, res) => {
+    const { email, password } = req.body
+
+    const userInfo = await userModel.findOne({ email })
+
+    if (!userInfo) {
+        throw new APIError("Email veya şifre hatalı!", 401)
+    }
+
+    const comparePassword = await bcrypt.compare(password, userInfo.password)
+
+    if (!comparePassword) {
+        throw new APIError("Email veya şifre hatalı!", 401)
+    }
+
     return res.json(req.body)
 }
 
