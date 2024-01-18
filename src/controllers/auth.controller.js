@@ -19,7 +19,7 @@ const login = async (req, res) => {
         throw new APIError("Email veya şifre hatalı!", 401)
     }
 
-    createToken(userInfo,res)
+    createToken(userInfo, res)
 }
 
 const register = async (req, res) => {
@@ -44,4 +44,8 @@ const register = async (req, res) => {
 
 }
 
-module.exports = { login, register }
+const me = async (req, res) => {
+    return new Response(req.user).success(res)
+}
+
+module.exports = { login, register, me }
